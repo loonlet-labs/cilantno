@@ -39,6 +39,7 @@ export class Game {
   private lastTime = 0;
   private animFrameId = 0;
   private pendingFinalScore = 0;
+  private pendingFinalLevel = 0;
 
   constructor(canvas: HTMLCanvasElement) {
     this.sceneManager = new SceneManager(canvas);
@@ -121,8 +122,8 @@ export class Game {
 
       if (qualifies) {
         this.pendingFinalScore = score;
-        // Show the modal on top of the game over / victory screen after a short delay
-        setTimeout(() => this.highScoreModal.show(score), 1500);
+        this.pendingFinalLevel = this.state.level;
+        this.highScoreModal.show(score);
       }
     } catch {
       // Silently fail — leaderboard is optional
@@ -134,7 +135,7 @@ export class Game {
       const res = await fetch("/api/leaderboard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, score: this.pendingFinalScore }),
+        body: JSON.stringify({ name, score: this.pendingFinalScore, level: this.pendingFinalLevel }),
       });
       const data = await res.json();
       this.highScoreModal.hide();
@@ -230,6 +231,7 @@ export class Game {
             this.setState("victory");
           } else {
             this.levelCompleteScreen.show(
+              this.state.level,
               this.state.score - bonusScore,
               bonusScore,
               this.state.totalScore,
@@ -238,6 +240,7 @@ export class Game {
             this.setState("levelComplete");
             // Re-show the level complete screen since setState hides everything
             this.levelCompleteScreen.show(
+              this.state.level,
               this.state.score - bonusScore,
               bonusScore,
               this.state.totalScore,

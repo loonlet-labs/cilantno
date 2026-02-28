@@ -27,5 +27,6 @@ export type IngredientType = "cilantro" | "lettuce" | "tomato" | "cucumber" | "c
 export interface LeaderboardEntry {
   name: string;
   score: number;
+  level: number;
   date: string;
 }

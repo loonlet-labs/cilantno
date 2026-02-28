@@ -6,6 +6,7 @@ const LEADERBOARD_KEY = "leaderboard.json";
 
 const r2 = new S3Client({
   endpoint: process.env.R2_ENDPOINT!,
+  region: "auto",
   accessKeyId: process.env.R2_ACCESS_KEY_ID!,
   secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
   bucket: process.env.R2_BUCKET_NAME!,
@@ -43,12 +44,14 @@ export function qualifiesForLeaderboard(
 export async function submitScore(
   name: string,
   score: number,
+  level: number,
 ): Promise<{ rank: number; entries: LeaderboardEntry[] }> {
   const entries = await readLeaderboard();
 
   const newEntry: LeaderboardEntry = {
     name: name.trim().slice(0, 50),
     score,
+    level,
     date: new Date().toISOString(),
   };
 

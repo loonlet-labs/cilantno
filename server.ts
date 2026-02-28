@@ -22,7 +22,7 @@ Bun.serve({
       POST: async (req) => {
         try {
           const body = await req.json();
-          const { name, score } = body as { name: string; score: number };
+          const { name, score, level } = body as { name: string; score: number; level: number };
 
           if (!name || typeof name !== "string" || name.trim().length === 0) {
             return Response.json({ error: "Name is required" }, { status: 400 });
@@ -36,7 +36,7 @@ Bun.serve({
             return Response.json({ qualified: false, entries });
           }
 
-          const result = await submitScore(name.trim(), score);
+          const result = await submitScore(name.trim(), score, level ?? 0);
           return Response.json({ qualified: true, ...result });
         } catch (err) {
           console.error("Failed to submit score:", err);

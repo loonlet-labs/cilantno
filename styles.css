@@ -381,6 +381,14 @@ body {
   white-space: nowrap;
 }
 
+.lb-level {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-right: 12px;
+  min-width: 30px;
+  text-align: center;
+}
+
 .lb-score {
   font-size: 18px;
   font-weight: 700;
@@ -545,6 +553,7 @@ body.cursor-default #game-canvas {
 
   .lb-rank { font-size: 18px; width: 40px; }
   .lb-name { font-size: 15px; }
+  .lb-level { font-size: 12px; }
   .lb-score { font-size: 15px; }
   .lb-row { padding: 10px 14px; }
 

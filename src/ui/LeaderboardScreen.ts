@@ -42,9 +42,11 @@ export class LeaderboardScreen {
       .map((entry, i) => {
         const rank = i + 1;
         const medal = rank === 1 ? "&#x1F947;" : rank === 2 ? "&#x1F948;" : rank === 3 ? "&#x1F949;" : `${rank}`;
+        const levelText = entry.level ? `Lv${entry.level}` : "";
         return `<div class="lb-row${rank <= 3 ? " lb-top" : ""}">
           <span class="lb-rank">${medal}</span>
           <span class="lb-name">${this.escapeHtml(entry.name)}</span>
+          <span class="lb-level">${levelText}</span>
           <span class="lb-score">${entry.score.toLocaleString()}</span>
         </div>`;
       })
