@@ -1,4 +1,4 @@
-import type { GameState, GameStateType } from "./types.ts";
+import type { GameState, GameStateType, LeaderboardEntry } from "./types.ts";
 import { LEVELS } from "./levels.ts";
 import { SceneManager } from "./scene/SceneManager.ts";
 import { InputManager } from "./input/InputManager.ts";
@@ -8,6 +8,8 @@ import { MenuScreen } from "./ui/MenuScreen.ts";
 import { LevelCompleteScreen } from "./ui/LevelCompleteScreen.ts";
 import { GameOverScreen } from "./ui/GameOverScreen.ts";
 import { VictoryScreen } from "./ui/VictoryScreen.ts";
+import { LeaderboardScreen } from "./ui/LeaderboardScreen.ts";
+import { HighScoreModal } from "./ui/HighScoreModal.ts";
 import type { Ingredient } from "./scene/ingredients/Ingredient.ts";
 
 const TOTAL_TIME = 60;
@@ -21,6 +23,8 @@ export class Game {
   private levelCompleteScreen: LevelCompleteScreen;
   private gameOverScreen: GameOverScreen;
   private victoryScreen: VictoryScreen;
+  private leaderboardScreen: LeaderboardScreen;
+  private highScoreModal: HighScoreModal;
 
   private state: GameState = {
     state: "menu",
@@ -34,6 +38,7 @@ export class Game {
 
   private lastTime = 0;
   private animFrameId = 0;
+  private pendingFinalScore = 0;
 
   constructor(canvas: HTMLCanvasElement) {
     this.sceneManager = new SceneManager(canvas);
@@ -44,13 +49,19 @@ export class Game {
     this.levelCompleteScreen = new LevelCompleteScreen();
     this.gameOverScreen = new GameOverScreen();
     this.victoryScreen = new VictoryScreen();
+    this.leaderboardScreen = new LeaderboardScreen();
+    this.highScoreModal = new HighScoreModal();
 
     this.inputManager.setOnPick((ingredient) => this.handlePick(ingredient));
 
     this.menuScreen.setOnStart(() => this.startGame());
+    this.menuScreen.setOnLeaderboard(() => this.showLeaderboard());
     this.levelCompleteScreen.setOnNext(() => this.nextLevel());
     this.gameOverScreen.setOnRetry(() => this.returnToMenu());
     this.victoryScreen.setOnPlayAgain(() => this.returnToMenu());
+    this.leaderboardScreen.setOnBack(() => this.setState("menu"));
+    this.highScoreModal.setOnSubmit((name) => this.submitHighScore(name));
+    this.highScoreModal.setOnSkip(() => this.skipHighScore());
 
     this.setState("menu");
     this.loop(0);
@@ -64,6 +75,8 @@ export class Game {
     this.levelCompleteScreen.hide();
     this.gameOverScreen.hide();
     this.victoryScreen.hide();
+    this.leaderboardScreen.hide();
+    this.highScoreModal.hide();
     this.hud.hide();
 
     switch (newState) {
@@ -82,13 +95,61 @@ export class Game {
         this.inputManager.setEnabled(false);
         this.audio.playGameOver();
         this.gameOverScreen.show(this.state.totalScore + this.state.score, this.state.level);
+        this.checkHighScore(this.state.totalScore + this.state.score);
         break;
       case "victory":
         this.inputManager.setEnabled(false);
         this.audio.playVictory();
         this.victoryScreen.show(this.state.totalScore + this.state.score);
+        this.checkHighScore(this.state.totalScore + this.state.score);
         break;
     }
+  }
+
+  private showLeaderboard() {
+    this.menuScreen.hide();
+    this.leaderboardScreen.show();
+  }
+
+  private async checkHighScore(score: number) {
+    try {
+      const res = await fetch("/api/leaderboard");
+      const entries: LeaderboardEntry[] = await res.json();
+      const qualifies =
+        score > 0 &&
+        (entries.length < 10 || score > (entries[entries.length - 1]?.score ?? 0));
+
+      if (qualifies) {
+        this.pendingFinalScore = score;
+        // Show the modal on top of the game over / victory screen after a short delay
+        setTimeout(() => this.highScoreModal.show(score), 1500);
+      }
+    } catch {
+      // Silently fail — leaderboard is optional
+    }
+  }
+
+  private async submitHighScore(name: string) {
+    try {
+      const res = await fetch("/api/leaderboard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, score: this.pendingFinalScore }),
+      });
+      const data = await res.json();
+      this.highScoreModal.hide();
+      if (data.entries) {
+        this.gameOverScreen.hide();
+        this.victoryScreen.hide();
+        this.leaderboardScreen.showWithEntries(data.entries);
+      }
+    } catch {
+      this.highScoreModal.hide();
+    }
+  }
+
+  private skipHighScore() {
+    this.highScoreModal.hide();
   }
 
   private startGame() {

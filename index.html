@@ -24,8 +24,26 @@
     <div id="menu-screen" class="screen">
       <h1 class="game-title">CILANTNO</h1>
       <p class="game-subtitle">Pick the cilantro. Save the salad.</p>
-      <button id="start-btn" class="game-btn">START</button>
+      <div class="menu-buttons">
+        <button id="start-btn" class="game-btn">START</button>
+        <button id="leaderboard-btn" class="game-btn btn-secondary">LEADERBOARD</button>
+      </div>
       <p class="menu-footer">Made with ❤️ by Loon Labs</p>
+    </div>
+    <div id="leaderboard-screen" class="screen hidden">
+      <h2>Leaderboard</h2>
+      <div id="leaderboard-list"></div>
+      <button id="leaderboard-back-btn" class="game-btn btn-secondary">BACK</button>
+    </div>
+    <div id="highscore-modal" class="screen hidden">
+      <div class="highscore-content">
+        <h2>New High Score!</h2>
+        <p class="highscore-score" id="highscore-value"></p>
+        <p>You made the leaderboard! Enter your name:</p>
+        <input type="text" id="highscore-name" class="highscore-input" placeholder="Your name" maxlength="50" autocomplete="off" />
+        <button id="highscore-submit-btn" class="game-btn">SUBMIT</button>
+        <button id="highscore-skip-btn" class="game-btn btn-secondary btn-small">SKIP</button>
+      </div>
     </div>
     <div id="level-complete-screen" class="screen hidden">
       <h2>Level Complete!</h2>

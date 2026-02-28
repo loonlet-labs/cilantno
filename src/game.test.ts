@@ -1,5 +1,7 @@
 import { test, expect, describe } from "bun:test";
 import { LEVELS } from "./levels.ts";
+import { qualifiesForLeaderboard } from "./leaderboard.ts";
+import type { LeaderboardEntry } from "./types.ts";
 
 describe("level configs", () => {
   test("there are 10 levels", () => {
@@ -89,5 +91,53 @@ describe("scoring", () => {
     expect(scoreL10).toBeGreaterThan(scoreL1);
     expect(scoreL10).toBe(500);
     expect(scoreL1).toBe(50);
+  });
+});
+
+describe("leaderboard qualification", () => {
+  const makeEntry = (name: string, score: number): LeaderboardEntry => ({
+    name,
+    score,
+    date: new Date().toISOString(),
+  });
+
+  test("qualifies when leaderboard is empty", () => {
+    expect(qualifiesForLeaderboard([], 100)).toBe(true);
+  });
+
+  test("qualifies when leaderboard has fewer than 10 entries", () => {
+    const entries = [makeEntry("Alice", 500)];
+    expect(qualifiesForLeaderboard(entries, 100)).toBe(true);
+  });
+
+  test("qualifies when score beats the lowest on a full board", () => {
+    const entries = Array.from({ length: 10 }, (_, i) =>
+      makeEntry(`Player ${i}`, 1000 - i * 100),
+    );
+    // Lowest score is 100, so 200 should qualify
+    expect(qualifiesForLeaderboard(entries, 200)).toBe(true);
+  });
+
+  test("does not qualify when score equals the lowest on a full board", () => {
+    const entries = Array.from({ length: 10 }, (_, i) =>
+      makeEntry(`Player ${i}`, 1000 - i * 100),
+    );
+    // Lowest score is 100
+    expect(qualifiesForLeaderboard(entries, 100)).toBe(false);
+  });
+
+  test("does not qualify when score is lower than the lowest", () => {
+    const entries = Array.from({ length: 10 }, (_, i) =>
+      makeEntry(`Player ${i}`, 1000 - i * 100),
+    );
+    expect(qualifiesForLeaderboard(entries, 50)).toBe(false);
+  });
+
+  test("does not qualify with zero score", () => {
+    expect(qualifiesForLeaderboard([], 0)).toBe(false);
+  });
+
+  test("does not qualify with negative score", () => {
+    expect(qualifiesForLeaderboard([], -100)).toBe(false);
   });
 });

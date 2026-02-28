@@ -1,14 +1,16 @@
 export class MenuScreen {
   private el: HTMLElement;
   private startBtn: HTMLElement;
+  private leaderboardBtn: HTMLElement;
   private onStart: (() => void) | null = null;
+  private onLeaderboard: (() => void) | null = null;
 
   constructor() {
     this.el = document.getElementById("menu-screen")!;
     this.startBtn = document.getElementById("start-btn")!;
-    this.startBtn.addEventListener("click", () => {
-      this.onStart?.();
-    });
+    this.leaderboardBtn = document.getElementById("leaderboard-btn")!;
+    this.startBtn.addEventListener("click", () => this.onStart?.());
+    this.leaderboardBtn.addEventListener("click", () => this.onLeaderboard?.());
   }
 
   show() {
@@ -21,5 +23,9 @@ export class MenuScreen {
 
   setOnStart(callback: () => void) {
     this.onStart = callback;
+  }
+
+  setOnLeaderboard(callback: () => void) {
+    this.onLeaderboard = callback;
   }
 }
