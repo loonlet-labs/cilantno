@@ -1,0 +1,4 @@
+import { Game } from "./game.ts";
+
+const canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
+const game = new Game(canvas);

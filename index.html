@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cilantno</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <canvas id="game-canvas"></canvas>
+  <div id="ui-overlay">
+    <div id="hud" class="hidden">
+      <div id="hud-left">
+        <span id="hud-level">Level 1</span>
+        <span id="hud-score">Score: 0</span>
+      </div>
+      <div id="hud-center">
+        <span id="hud-timer">60</span>
+      </div>
+      <div id="hud-right">
+        <span id="hud-cilantro-count">0 / 3</span>
+      </div>
+    </div>
+    <div id="menu-screen" class="screen">
+      <h1 class="game-title">CILANTNO</h1>
+      <p class="game-subtitle">Pick the cilantro. Save the salad.</p>
+      <button id="start-btn" class="game-btn">START</button>
+    </div>
+    <div id="level-complete-screen" class="screen hidden">
+      <h2>Level Complete!</h2>
+      <div id="lc-stats"></div>
+      <button id="next-level-btn" class="game-btn">Next Level</button>
+    </div>
+    <div id="game-over-screen" class="screen hidden">
+      <h2>Time's Up!</h2>
+      <p id="go-score"></p>
+      <button id="retry-btn" class="game-btn">Try Again</button>
+    </div>
+    <div id="victory-screen" class="screen hidden">
+      <canvas id="confetti-canvas"></canvas>
+      <div id="victory-content">
+        <div id="victory-crown">&#x1F451;</div>
+        <h2 id="victory-title">CILANTNO CHAMPION</h2>
+        <p id="victory-subtitle">All 10 levels conquered. The salad is saved.</p>
+        <div id="victory-stats">
+          <div class="victory-stat" id="vs-levels">
+            <span class="stat-value">10 / 10</span>
+            <span class="stat-label">Levels Cleared</span>
+          </div>
+          <div class="victory-stat" id="vs-score">
+            <span class="stat-value" id="victory-score">0</span>
+            <span class="stat-label">Final Score</span>
+          </div>
+        </div>
+        <button id="play-again-btn" class="game-btn victory-btn">Play Again</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>

@@ -1,12 +1,16 @@
 {
   "name": "cilantno",
-  "module": "index.ts",
+  "module": "server.ts",
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/three": "^0.183.1"
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "three": "^0.183.1"
   }
 }
