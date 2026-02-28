@@ -9,7 +9,7 @@
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "preview": "bun build ./index.html --outdir ./dist && bunx serve ./dist",
-    "deploy": "bun run build && bunx wrangler pages deploy ./dist --project-name cilantno"
+    "deploy": "bun run build && bunx wrangler pages deploy"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260228.1",
