@@ -10,12 +10,16 @@ body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   user-select: none;
   -webkit-user-select: none;
+  touch-action: none;
+  -webkit-touch-callout: none;
 }
 
 #game-canvas {
   display: block;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
+  touch-action: none;
 }
 
 #ui-overlay {
@@ -24,6 +28,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   pointer-events: none;
 }
 
@@ -328,4 +333,143 @@ body.cursor-pointer #game-canvas {
 
 body.cursor-default #game-canvas {
   cursor: default;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  #hud {
+    padding: 10px 14px;
+  }
+
+  #hud span {
+    font-size: 14px;
+  }
+
+  #hud-timer {
+    font-size: 32px;
+  }
+
+  .game-title {
+    font-size: 48px;
+    letter-spacing: 4px;
+  }
+
+  .game-subtitle {
+    font-size: 16px;
+    margin-bottom: 32px;
+    padding: 0 24px;
+    text-align: center;
+  }
+
+  .game-btn {
+    padding: 14px 36px;
+    font-size: 18px;
+  }
+
+  .screen h2 {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .screen p {
+    font-size: 16px;
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  #lc-stats .big-score {
+    font-size: 36px;
+  }
+
+  #go-score {
+    font-size: 22px !important;
+  }
+
+  .menu-footer {
+    font-size: 12px !important;
+    bottom: 16px;
+  }
+
+  .float-score {
+    font-size: 18px;
+  }
+
+  /* Victory */
+  #victory-crown {
+    font-size: 48px;
+  }
+
+  #victory-title {
+    font-size: 32px;
+    letter-spacing: 3px;
+    padding: 0 16px;
+    text-align: center;
+  }
+
+  @keyframes victoryTitleIn {
+    0% { opacity: 0; transform: scale(0.6); letter-spacing: 10px; }
+    100% { opacity: 1; transform: scale(1); letter-spacing: 3px; }
+  }
+
+  #victory-subtitle {
+    font-size: 15px;
+    margin-bottom: 28px;
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  #victory-stats {
+    gap: 28px;
+    margin-bottom: 28px;
+  }
+
+  .stat-value {
+    font-size: 32px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+  }
+}
+
+/* Short screens (landscape mobile) */
+@media (max-height: 500px) {
+  .game-title {
+    font-size: 40px;
+    margin-bottom: 4px;
+  }
+
+  .game-subtitle {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .screen h2 {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  #victory-crown {
+    font-size: 36px;
+  }
+
+  #victory-title {
+    font-size: 28px;
+  }
+
+  #victory-subtitle {
+    margin-bottom: 16px;
+  }
+
+  #victory-stats {
+    margin-bottom: 16px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+  }
+
+  #hud-timer {
+    font-size: 28px;
+  }
 }

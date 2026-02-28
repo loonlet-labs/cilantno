@@ -28,7 +28,7 @@ export class SceneManager {
     this.scene.background = new THREE.Color(0x2d1b4e);
 
     this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-    this.camera.position.set(0, 7, 5);
+    this.updateCamera();
     this.camera.lookAt(0, 0, 0);
 
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -208,9 +208,28 @@ export class SceneManager {
     this.renderer.render(this.scene, this.camera);
   }
 
-  private onResize = () => {
-    this.camera.aspect = window.innerWidth / window.innerHeight;
+  private updateCamera() {
+    const aspect = window.innerWidth / window.innerHeight;
+    if (aspect < 1) {
+      // Portrait mobile: zoom in close, nearly top-down so bowl fills the width
+      this.camera.position.set(0, 8, 2);
+      this.camera.fov = 40;
+    } else if (aspect < 1.4) {
+      // Tablet / near-square
+      this.camera.position.set(0, 7.5, 3.5);
+      this.camera.fov = 45;
+    } else {
+      // Landscape / desktop
+      this.camera.position.set(0, 7, 5);
+      this.camera.fov = 50;
+    }
+    this.camera.aspect = aspect;
     this.camera.updateProjectionMatrix();
+    this.camera.lookAt(0, 0, 0);
+  }
+
+  private onResize = () => {
+    this.updateCamera();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   };
 }
