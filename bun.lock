@@ -8,6 +8,7 @@
         "three": "^0.183.1",
       },
       "devDependencies": {
+        "@cloudflare/workers-types": "^4.20260228.1",
         "@types/bun": "latest",
         "@types/three": "^0.183.1",
         "wrangler": "^4.69.0",
@@ -31,6 +32,8 @@
     "@cloudflare/workerd-linux-arm64": ["@cloudflare/workerd-linux-arm64@1.20260305.0", "", { "os": "linux", "cpu": "arm64" }, "sha512-72QTkY5EzylmvCZ8ZTrnJ9DctmQsfSof1OKyOWqu/pv/B2yACfuPMikq8RpPxvVu7hhS0ztGP6ZvXz72Htq4Zg=="],
 
     "@cloudflare/workerd-windows-64": ["@cloudflare/workerd-windows-64@1.20260305.0", "", { "os": "win32", "cpu": "x64" }, "sha512-BA0uaQPOaI2F6mJtBDqplGnQQhpXCzwEMI33p/TnDxtSk9u8CGIfBFuI6uqo8mJ6ijIaPjeBLGOn2CiRMET4qg=="],
+
+    "@cloudflare/workers-types": ["@cloudflare/workers-types@4.20260228.1", "", {}, "sha512-gTpLuST3b1gdQfp+u1yiMavoE+n1g1CXuHeiDtlChOePVje+R/V92k6JeEY+6o9qVmQpHzluMe9j/OwvRJuCUg=="],
 
     "@cspotcode/source-map-support": ["@cspotcode/source-map-support@0.8.1", "", { "dependencies": { "@jridgewell/trace-mapping": "0.3.9" } }, "sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw=="],
 

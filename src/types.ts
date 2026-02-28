@@ -23,3 +23,10 @@ export interface GameState {
 }
 
 export type IngredientType = "cilantro" | "lettuce" | "tomato" | "cucumber" | "crouton" | "parsley" | "onion";
+
+export interface LeaderboardEntry {
+  name: string;
+  score: number;
+  level: number;
+  date: string;
+}

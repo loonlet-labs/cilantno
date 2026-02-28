@@ -1,0 +1,6 @@
+name = "cilantno"
+pages_build_output_dir = "./dist"
+
+[[r2_buckets]]
+binding = "LEADERBOARD"
+bucket_name = "cilantno-leaderboard"
