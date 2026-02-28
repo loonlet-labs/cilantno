@@ -210,10 +210,16 @@ export class SceneManager {
 
   private updateCamera() {
     const aspect = window.innerWidth / window.innerHeight;
+    const h = window.innerHeight;
+
     if (aspect < 1) {
-      // Portrait mobile: zoom in close, nearly top-down so bowl fills the width
-      this.camera.position.set(0, 8, 2);
-      this.camera.fov = 40;
+      // Portrait mobile
+      this.camera.position.set(0, 8.5, 5);
+      this.camera.fov = 48;
+    } else if (h < 500) {
+      // Landscape mobile — short screen, zoom in so bowl fills the limited height
+      this.camera.position.set(0, 6, 1.5);
+      this.camera.fov = 38;
     } else if (aspect < 1.4) {
       // Tablet / near-square
       this.camera.position.set(0, 7.5, 3.5);
