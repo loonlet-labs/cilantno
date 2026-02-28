@@ -12,6 +12,7 @@
     "deploy": "bun run build && bunx wrangler pages deploy ./dist --project-name cilantno"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260228.1",
     "@types/bun": "latest",
     "@types/three": "^0.183.1",
     "wrangler": "^4.69.0"

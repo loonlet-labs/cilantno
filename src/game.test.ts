@@ -98,6 +98,7 @@ describe("leaderboard qualification", () => {
   const makeEntry = (name: string, score: number): LeaderboardEntry => ({
     name,
     score,
+    level: 1,
     date: new Date().toISOString(),
   });
 

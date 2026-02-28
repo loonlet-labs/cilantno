@@ -137,7 +137,7 @@ export class Game {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, score: this.pendingFinalScore, level: this.pendingFinalLevel }),
       });
-      const data = await res.json();
+      const data = (await res.json()) as { entries?: LeaderboardEntry[] };
       this.highScoreModal.hide();
       if (data.entries) {
         this.gameOverScreen.hide();

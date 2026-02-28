@@ -1,0 +1,3 @@
+[[r2_buckets]]
+binding = "LEADERBOARD"
+bucket_name = "cilantno-leaderboard"
