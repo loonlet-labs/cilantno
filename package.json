@@ -3,9 +3,18 @@
   "module": "server.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "dev": "bun --hot ./server.ts",
+    "build": "bun build ./index.html --outdir ./dist --minify",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "preview": "bun build ./index.html --outdir ./dist && bunx serve ./dist",
+    "deploy": "bun run build && bunx wrangler pages deploy ./dist --project-name cilantno"
+  },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/three": "^0.183.1"
+    "@types/three": "^0.183.1",
+    "wrangler": "^4.69.0"
   },
   "peerDependencies": {
     "typescript": "^5"
