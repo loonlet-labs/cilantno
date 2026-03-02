@@ -1,106 +1,62 @@
+# CLAUDE.md
 
-Default to using Bun instead of Node.js.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-- Use `bun <file>` instead of `node <file>` or `ts-node <file>`
-- Use `bun test` instead of `jest` or `vitest`
-- Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
-- Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
-- Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Bun automatically loads .env, so don't use dotenv.
+## Project Overview
 
-## APIs
+Cilantno is a 3D web puzzle game ("Pick the cilantro. Save the salad.") built with Three.js, vanilla TypeScript DOM for UI, and Bun. Players pick cilantro from a salad bowl across 10 progressively harder levels. Deployed on Cloudflare Pages with an R2-backed leaderboard.
 
-- `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
-- `bun:sqlite` for SQLite. Don't use `better-sqlite3`.
-- `Bun.redis` for Redis. Don't use `ioredis`.
-- `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
-- `WebSocket` is built-in. Don't use `ws`.
-- Prefer `Bun.file` over `node:fs`'s readFile/writeFile
-- Bun.$`ls` instead of execa.
+## Commands
 
-## Testing
+- `bun run dev` — Start dev server with HMR (port 3000)
+- `bun run build` — Bundle to `./dist` (HTML entry point: `index.html`)
+- `bun test` — Run tests (`src/game.test.ts`)
+- `bun run typecheck` — TypeScript check (`tsc --noEmit`)
+- `bun run deploy` — Build + deploy to Cloudflare Pages
 
-Use `bun test` to run tests.
+## Bun Conventions
 
-```ts#index.test.ts
-import { test, expect } from "bun:test";
+Default to Bun instead of Node.js for everything:
 
-test("hello world", () => {
-  expect(1).toBe(1);
-});
-```
+- `bun <file>` not `node`/`ts-node`; `bun test` not jest/vitest; `bun install` not npm/yarn
+- `Bun.serve()` with routes, not Express. HTML imports for bundling, not Vite.
+- `Bun.file` over `node:fs`. `Bun.$\`cmd\`` over execa. Bun loads `.env` automatically.
+- For Bun API details: `node_modules/bun-types/docs/**.md`
 
-## Frontend
+## Architecture
 
-Use HTML imports with `Bun.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
+### Entry Points
 
-Server:
+- **`index.html`** — Frontend entry. Loads `src/main.ts` as `<script type="module">`. Contains all UI overlay markup (menus, HUD, modals).
+- **`server.ts`** — Bun.serve() dev server. Serves `index.html` at `/` and `/api/leaderboard` (GET/POST). Uses `Bun.S3Client` for R2 in dev.
+- **`functions/api/leaderboard.ts`** — Cloudflare Pages Function (production API). Same leaderboard logic but uses R2 bucket binding directly.
 
-```ts#index.ts
-import index from "./index.html"
+### Game Core (`src/game.ts`)
 
-Bun.serve({
-  routes: {
-    "/": index,
-    "/api/users/:id": {
-      GET: (req) => {
-        return new Response(JSON.stringify({ id: req.params.id }));
-      },
-    },
-  },
-  // optional websocket support
-  websocket: {
-    open: (ws) => {
-      ws.send("Hello, world!");
-    },
-    message: (ws, message) => {
-      ws.send(message);
-    },
-    close: (ws) => {
-      // handle close
-    }
-  },
-  development: {
-    hmr: true,
-    console: true,
-  }
-})
-```
+Central orchestrator using a state machine (`menu` → `playing` → `levelComplete` → `gameOver`/`victory`). Owns all managers and UI screens. The `Game` class wires everything together: scene setup, input callbacks, level progression, scoring.
 
-HTML files can import .tsx, .jsx or .js files directly and Bun's bundler will transpile & bundle automatically. `<link>` tags can point to stylesheets and Bun's CSS bundler will bundle.
+### Manager Pattern
 
-```html#index.html
-<html>
-  <body>
-    <h1>Hello, world!</h1>
-    <script type="module" src="./frontend.tsx"></script>
-  </body>
-</html>
-```
+- **`src/scene/SceneManager.ts`** — Three.js scene, camera, renderer, lighting, bowl. Handles ingredient placement with procedural distribution (Poisson-disk-like). Manages raycasting targets.
+- **`src/input/InputManager.ts`** — Mouse/touch raycasting for ingredient picking. Hover highlighting via emissive color.
+- **`src/audio/AudioManager.ts`** — Web Audio API with fully synthesized sounds (no audio files). Each sound is a programmatic oscillator sequence.
 
-With the following `frontend.tsx`:
+### Ingredients (`src/scene/ingredients/`)
 
-```tsx#frontend.tsx
-import React from "react";
+All inherit from abstract `Ingredient` base class. Each defines its own Three.js geometry. `Cilantro` is the target; `Parsley` is the decoy (introduced at level 4). Others are clutter: `Lettuce`, `Tomato`, `Cucumber`, `Crouton`, `Onion`.
 
-// import .css files directly and it works
-import './index.css';
+### UI Screens (`src/ui/`)
 
-import { createRoot } from "react-dom/client";
+Vanilla DOM manipulation — no framework. Each screen class manages a specific overlay: `MenuScreen`, `HUD`, `LevelCompleteScreen`, `GameOverScreen`, `VictoryScreen` (with confetti), `LeaderboardScreen`, `HighScoreModal`.
 
-const root = createRoot(document.body);
+### Level Config (`src/levels.ts`)
 
-export default function Frontend() {
-  return <h1>Hello, world!</h1>;
-}
+Array of 10 `LevelConfig` objects controlling: cilantro count, scale, clutter count, parsley decoys, hidden ingredients, ingredient shifting, lighting dimness, and wrong-pick time penalties.
 
-root.render(<Frontend />);
-```
+### Leaderboard (`src/leaderboard.ts`)
 
-Then, run index.ts
+Reads/writes a JSON array to R2 storage. Maintains top 10 scores sorted descending. Shared logic between dev server and Cloudflare Pages Function.
 
-```sh
-bun --hot ./index.ts
-```
+## Deployment
 
-For more information, read the Bun API docs in `node_modules/bun-types/docs/**.md`.
+Cloudflare Pages with R2 storage. Config in `wrangler.toml`. R2 bucket binding: `LEADERBOARD`. Required env vars for local dev: `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`.
